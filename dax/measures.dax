@@ -1,0 +1,100 @@
+
+CORE MEASURES (Measures Table)
+
+
+Total Appointments = 
+COUNTROWS(Appointments)
+
+Missed Appointments = 
+CALCULATE(
+    COUNTROWS(Appointments),
+    Appointments[NoShow] = "Yes"
+)
+
+Attended Appointments = 
+CALCULATE(
+    COUNTROWS(Appointments),
+    Appointments[NoShow] = "No"
+)
+
+Attendance Rate = 
+DIVIDE(
+    [Attended Appointments],
+    [Total Appointments]
+)
+
+No Show Rate = 
+DIVIDE(
+    [Missed Appointments],
+    [Total Appointments]
+)
+
+No Show Percentage = 
+DIVIDE([Missed Appointments], [Total Appointments], 0)
+
+Average Age = 
+AVERAGE(Appointments[Age])
+
+Average Wait Days = 
+AVERAGE(Appointments[WaitDays])
+
+
+
+CALCULATED COLUMNS (Appointments Table)
+
+
+Age Group = 
+SWITCH(
+    TRUE(),
+    Appointments[Age] < 18, "0-17",
+    Appointments[Age] < 35, "18-34",
+    Appointments[Age] < 50, "35-49",
+    Appointments[Age] < 65, "50-64",
+    "65+"
+)
+
+Appointment Weekday = 
+FORMAT(
+    Appointments[AppointmentDate],
+    "dddd"
+)
+
+Weekday Number = 
+WEEKDAY(
+    Appointments[AppointmentDate],
+    2
+)
+
+Appointment Month = 
+FORMAT(
+    Appointments[AppointmentDate],
+    "MMMM"
+)
+
+Month Number = 
+MONTH(
+    Appointments[AppointmentDate]
+)
+
+SMS Status = 
+IF(Appointments[ReceivedSMS] = 1, "SMS", "No SMS")
+
+Wait Category = 
+SWITCH(
+    TRUE(),
+    Appointments[WaitDays] = 0, "Same Day",
+    Appointments[WaitDays] <= 2, "1-2 Days",
+    Appointments[WaitDays] <= 7, "3-7 Days",
+    Appointments[WaitDays] <= 14, "8-14 Days",
+    "15+ Days"
+)
+
+Wait Category Order = 
+SWITCH(
+    Appointments[Wait Category],
+    "Same Day", 1,
+    "1-2 Days", 2,
+    "3-7 Days", 3,
+    "8-14 Days", 4,
+    "15+ Days", 5
+)
